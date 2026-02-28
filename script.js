@@ -235,6 +235,7 @@ function login() {
 }
 
 function logout() {
+    console.log('Logout clicked');
     currentUser = null;
     localStorage.removeItem('kalaxia_user');
     updateNavAuth();
@@ -242,9 +243,19 @@ function logout() {
     
     // Перезагружаем страницу через 1 секунду
     setTimeout(() => {
-        window.location.reload();
+        window.location.href = window.location.href;
     }, 1000);
 }
+
+// Делаем функции доступными глобально для onclick
+window.logout = logout;
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.switchModal = switchModal;
+window.openBuyModal = openBuyModal;
+window.processPayment = processPayment;
+window.login = login;
+window.register = register;
 
 // ========================================
 // Модальные окна
