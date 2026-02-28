@@ -19,7 +19,126 @@ let currentUser = null;
 let selectedPlan = 'month';
 let selectedAmount = 249;
 
+// ========================================
+// ГЛОБАЛЬНЫЕ ФУНКЦИИ (для onclick в HTML)
+// ========================================
+
+window.logout = function() {
+    console.log('Logout clicked');
+    currentUser = null;
+    localStorage.removeItem('kalaxia_user');
+    updateNavAuth();
+    showToast('Вы вышли из аккаунта', 'info');
+    setTimeout(() => {
+        window.location.href = window.location.href;
+    }, 1000);
+};
+
+window.openModal = function(modalId) {
+    document.getElementById(modalId).classList.add('active');
+    document.body.style.overflow = 'hidden';
+};
+
+window.closeModal = function(modalId) {
+    document.getElementById(modalId).classList.remove('active');
+    document.body.style.overflow = '';
+};
+
+window.switchModal = function(fromId, toId) {
+    closeModal(fromId);
+    setTimeout(() => openModal(toId), 300);
+};
+
+window.openBuyModal = function(plan, amount) {
+    selectedPlan = plan;
+    selectedAmount = amount;
+    const planNames = {
+        '1day': '1 День',
+        '7day': '7 Дней',
+        '14day': '14 Дней',
+        '30day': '30 Дней',
+        'lifetime': 'Life-Time'
+    };
+    document.getElementById('buyPlanName').textContent = planNames[plan] || plan;
+    document.getElementById('buyPlanPrice').textContent = amount;
+    document.getElementById('payAmount').textContent = amount;
+    if (currentUser) {
+        document.getElementById('buyEmail').value = currentUser.email;
+        document.getElementById('buyDiscord').value = currentUser.discord || '';
+    }
+    openModal('buyModal');
+};
+
+window.processPayment = function() {
+    const discord = document.getElementById('buyDiscord').value.trim();
+    const email = document.getElementById('buyEmail').value.trim();
+    if (!discord || !email) { showToast('Заполните Discord и Email', 'error'); return; }
+    if (!currentUser) { showToast('Сначала зарегистрируйтесь или войдите', 'error'); closeModal('buyModal'); setTimeout(() => openModal('registerModal'), 500); return; }
+    const users = JSON.parse(localStorage.getItem('kalaxia_users') || '[]');
+    const userIndex = users.findIndex(u => u.id === currentUser.id);
+    if (userIndex === -1) { showToast('Пользователь не найден', 'error'); return; }
+    const planDurations = {'1day': 1, '7day': 7, '14day': 14, '30day': 30, 'lifetime': 99999};
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + planDurations[selectedPlan]);
+    users[userIndex].subscription = {plan: selectedPlan, amount: selectedAmount, discord, startDate: new Date().toISOString(), endDate: endDate.toISOString(), status: 'active'};
+    localStorage.setItem('kalaxia_users', JSON.stringify(users));
+    currentUser = users[userIndex];
+    localStorage.setItem('kalaxia_user', JSON.stringify(currentUser));
+    showToast(`Подписка "${selectedPlan}" активирована!`, 'success');
+    closeModal('buyModal');
+    document.getElementById('buyDiscord').value = '';
+    document.getElementById('buyEmail').value = '';
+};
+
+window.login = function() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    if (!email || !password) { showToast('Введите email и пароль', 'error'); return; }
+    const users = JSON.parse(localStorage.getItem('kalaxia_users') || '[]');
+    const user = users.find(u => u.email === email && u.password === password);
+    if (!user) { showToast('Неверный email или пароль', 'error'); return; }
+    currentUser = user;
+    localStorage.setItem('kalaxia_user', JSON.stringify(user));
+    updateNavAuth();
+    if (user.isAdmin) showAdminButton();
+    showToast(`С возвращением, ${user.username}!`, 'success');
+    closeModal('loginModal');
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginPassword').value = '';
+};
+
+window.register = async function() {
+    const username = document.getElementById('regUsername').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const passwordConfirm = document.getElementById('regPasswordConfirm').value;
+    if (!username || !email || !password) { showToast('Заполните все поля', 'error'); return; }
+    if (password !== passwordConfirm) { showToast('Пароли не совпадают', 'error'); return; }
+    if (password.length < 6) { showToast('Пароль должен быть не менее 6 символов', 'error'); return; }
+    const newUser = {id: Date.now(), username, email, password, createdAt: new Date().toISOString(), subscription: null, isAdmin: false, discord: null};
+    try {
+        if (isJsonBinConfigured) { await saveToCloud(newUser); showToast('✅ Пользователь сохранён в облаке!', 'success'); }
+        const users = JSON.parse(localStorage.getItem('kalaxia_users') || '[]');
+        users.push(newUser);
+        localStorage.setItem('kalaxia_users', JSON.stringify(users));
+        currentUser = newUser;
+        localStorage.setItem('kalaxia_user', JSON.stringify(newUser));
+        updateNavAuth();
+        showToast('Регистрация успешна!', 'success');
+        closeModal('registerModal');
+        document.getElementById('regUsername').value = '';
+        document.getElementById('regEmail').value = '';
+        document.getElementById('regPassword').value = '';
+        document.getElementById('regPasswordConfirm').value = '';
+    } catch (e) {
+        console.error('Ошибка:', e);
+        showToast('Ошибка регистрации: ' + e.message, 'error');
+    }
+};
+
+// ========================================
 // Инициализация при загрузке
+// ========================================
 document.addEventListener('DOMContentLoaded', () => {
     checkAuth();
     initMobileMenu();
