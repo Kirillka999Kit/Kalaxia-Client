@@ -197,6 +197,43 @@
         </div>
     </div>
 
+    <!-- Модальное окно выдачи подписки -->
+    <div class="modal" id="giveSubModal" style="display: none;">
+        <div class="modal-overlay" onclick="closeGiveSubModal()"></div>
+        <div class="modal-content" style="max-width: 450px;">
+            <button class="modal-close" onclick="closeGiveSubModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-header">
+                <i class="fas fa-gift"></i>
+                <h2>Выдача подписки</h2>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Пользователь:</label>
+                    <input type="text" id="subUsername" readonly style="background: var(--bg-dark); color: var(--text-muted);">
+                </div>
+                <div class="form-group">
+                    <label>Тип подписки:</label>
+                    <select id="subType" style="width: 100%; padding: 14px 16px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 10px; color: var(--text-primary); font-size: 1rem;">
+                        <option value="1day">1 День - 40₽</option>
+                        <option value="7day">7 Дней - 80₽</option>
+                        <option value="14day">14 Дней - 150₽</option>
+                        <option value="30day">30 Дней - 300₽</option>
+                        <option value="lifetime">Life-Time - 500₽</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Дней:</label>
+                    <input type="number" id="subDays" value="30" min="1" max="99999" style="width: 100%; padding: 14px 16px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 10px; color: var(--text-primary); font-size: 1rem;">
+                </div>
+                <button class="btn btn-primary btn-block" onclick="giveSubscription()">
+                    <i class="fas fa-gift"></i> Выдать подписку
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // JSONBin конфигурация (ТА ЖЕ ЧТО В script.js)
         const JSONBIN_CONFIG = {
@@ -293,6 +330,9 @@
                         <div style="text-align: right; display: flex; gap: 8px; justify-content: flex-end;">
                             <button class="btn btn-outline btn-sm" onclick="toggleAdmin('${user.email}', ${isAdmin})" style="border-color: ${isAdmin ? 'var(--error)' : 'var(--primary)'}; color: ${isAdmin ? 'var(--error)' : 'var(--primary)'};">
                                 <i class="fas fa-${isAdmin ? 'user-times' : 'user-shield'}"></i> ${isAdmin ? 'Снять админа' : 'Дать админку'}
+                            </button>
+                            <button class="btn btn-outline btn-sm" onclick="openGiveSubModal('${user.email}', '${user.username}')" style="border-color: var(--success); color: var(--success);">
+                                <i class="fas fa-gift"></i> Выдать подписку
                             </button>
                             <button class="btn btn-outline btn-sm" onclick="deleteUser('${user.email}')" style="border-color: var(--error); color: var(--error);">
                                 <i class="fas fa-trash"></i> Удалить
@@ -394,6 +434,73 @@
                 loadUsers();
             }
         }
+
+        let currentUserEmail = '';
+
+        window.openGiveSubModal = function(email, username) {
+            currentUserEmail = email;
+            document.getElementById('subUsername').value = username;
+            document.getElementById('giveSubModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeGiveSubModal = function() {
+            document.getElementById('giveSubModal').style.display = 'none';
+            document.body.style.overflow = '';
+            currentUserEmail = '';
+        };
+
+        window.giveSubscription = async function() {
+            const subType = document.getElementById('subType').value;
+            const days = parseInt(document.getElementById('subDays').value);
+            
+            if (!currentUserEmail) { alert('Ошибка: не выбран пользователь'); return; }
+
+            let users = [];
+            if (isJsonBinConfigured) {
+                try {
+                    const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binId}/latest`, {
+                        method: 'GET',
+                        headers: { 'X-Master-Key': JSONBIN_CONFIG.apiKey }
+                    });
+                    const data = await response.json();
+                    users = data.record.users || [];
+                } catch (e) { console.error('Ошибка загрузки:', e); }
+            }
+            if (users.length === 0) { users = JSON.parse(localStorage.getItem('kalaxia_users') || '[]'); }
+
+            const userIndex = users.findIndex(u => u.email === currentUserEmail);
+            if (userIndex === -1) { alert('Пользователь не найден!'); return; }
+
+            const endDate = new Date();
+            endDate.setDate(endDate.getDate() + days);
+            const prices = {'1day': 40, '7day': 80, '14day': 150, '30day': 300, 'lifetime': 500};
+            
+            users[userIndex].subscription = {
+                plan: subType,
+                amount: prices[subType] || 0,
+                discord: users[userIndex].discord || '',
+                startDate: new Date().toISOString(),
+                endDate: endDate.toISOString(),
+                status: 'active',
+                issuedBy: 'admin'
+            };
+
+            if (isJsonBinConfigured) {
+                try {
+                    await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binId}`, {
+                        method: 'PUT',
+                        headers: {'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_CONFIG.apiKey},
+                        body: JSON.stringify({ users })
+                    });
+                } catch (e) { console.error('Ошибка сохранения:', e); }
+            }
+            localStorage.setItem('kalaxia_users', JSON.stringify(users));
+
+            alert(`Подписка "${subType}" выдана пользователю на ${days} дней!`);
+            closeGiveSubModal();
+            loadUsers();
+        };
     </script>
 </body>
 </html>
