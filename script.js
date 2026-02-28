@@ -6,8 +6,8 @@
 // Настрой по инструкции в JSONBIN_SETUP.txt
 
 const JSONBIN_CONFIG = {
-    apiKey: "ВСТАВЬ_СЮДА_КЛЮЧ",  // Сюда вставь ключ из JSONBin
-    binId: "ВСТАВЬ_СЮДА_ID"      // Сюда вставь ID своего Bin
+    apiKey: "$2a$10$bzIqlIo6xwXfWtpHEFGbmOGod.Je0ow6UxY6s0v796X0ITmsMv0OC",  // Сюда вставь ключ из JSONBin
+    binId: "69a3060143b1c97be9a6b67a"      // Сюда вставь ID своего Bin
 };
 
 // Проверяем настроен ли JSONBin
