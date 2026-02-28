@@ -44,9 +44,14 @@ function checkAuth() {
 
 function updateNavAuth() {
     const navAuth = document.querySelector('.nav-auth');
+    if (!navAuth) return;
+    
     if (currentUser) {
         navAuth.innerHTML = `
-            <span style="color: var(--text-secondary); display: flex; align-items: center; gap: 8px;">
+            <a href="admin.html" class="btn btn-outline btn-sm">
+                <i class="fas fa-cog"></i> Админ
+            </a>
+            <span style="color: var(--text-secondary); display: flex; align-items: center; gap: 8px; margin-right: 10px;">
                 <i class="fas fa-user-circle" style="color: var(--primary);"></i>
                 ${currentUser.username}
             </span>
@@ -56,6 +61,9 @@ function updateNavAuth() {
         `;
     } else {
         navAuth.innerHTML = `
+            <a href="admin.html" class="btn btn-outline btn-sm">
+                <i class="fas fa-cog"></i> Админ
+            </a>
             <button class="btn btn-outline btn-sm" onclick="openModal('loginModal')">
                 <i class="fas fa-sign-in-alt"></i> Вход
             </button>
@@ -231,6 +239,11 @@ function logout() {
     localStorage.removeItem('kalaxia_user');
     updateNavAuth();
     showToast('Вы вышли из аккаунта', 'info');
+    
+    // Перезагружаем страницу через 1 секунду
+    setTimeout(() => {
+        window.location.reload();
+    }, 1000);
 }
 
 // ========================================

@@ -267,17 +267,19 @@
                 return;
             }
 
-            userList.innerHTML = users.map(user => {
+            userList.innerHTML = users.map((user, index) => {
                 const sub = user.subscription;
                 const planClass = sub && new Date(sub.endDate) > new Date() ? 'plan-active' : 'plan-none';
                 const planText = sub 
                     ? (new Date(sub.endDate) > new Date() ? `${sub.plan} (активна)` : `${sub.plan} (истекла)`)
                     : 'Нет подписки';
+                
+                const isAdmin = user.isAdmin || false;
 
                 return `
                     <div class="user-card">
                         <div class="user-info">
-                            <h4>${user.username}</h4>
+                            <h4>${user.username} ${isAdmin ? '<span style="color: var(--primary); font-size: 0.8rem; margin-left: 8px;">(ADMIN)</span>' : ''}</h4>
                             <p><i class="fas fa-envelope"></i> ${user.email}</p>
                         </div>
                         <div class="user-subscription">
@@ -288,7 +290,10 @@
                             <p>Зарегистрирован:</p>
                             <p>${new Date(user.createdAt).toLocaleDateString('ru-RU')}</p>
                         </div>
-                        <div style="text-align: right;">
+                        <div style="text-align: right; display: flex; gap: 8px; justify-content: flex-end;">
+                            <button class="btn btn-outline btn-sm" onclick="toggleAdmin('${user.email}', ${isAdmin})" style="border-color: ${isAdmin ? 'var(--error)' : 'var(--primary)'}; color: ${isAdmin ? 'var(--error)' : 'var(--primary)'};">
+                                <i class="fas fa-${isAdmin ? 'user-times' : 'user-shield'}"></i> ${isAdmin ? 'Снять админа' : 'Дать админку'}
+                            </button>
                             <button class="btn btn-outline btn-sm" onclick="deleteUser('${user.email}')" style="border-color: var(--error); color: var(--error);">
                                 <i class="fas fa-trash"></i> Удалить
                             </button>
@@ -334,6 +339,60 @@
             
             alert('Пользователь удалён!');
             loadUsers();
+        }
+
+        async function toggleAdmin(email, currentIsAdmin) {
+            const action = currentIsAdmin ? 'снять' : 'дать';
+            if (!confirm(`${action === 'снять' ? 'Снять' : 'Дать'} админку пользователю ${email}?`)) return;
+
+            // Получаем пользователей
+            let users = [];
+            if (isJsonBinConfigured) {
+                try {
+                    const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binId}/latest`, {
+                        method: 'GET',
+                        headers: {
+                            'X-Master-Key': JSONBIN_CONFIG.apiKey
+                        }
+                    });
+                    const data = await response.json();
+                    users = data.record.users || [];
+                } catch (e) {
+                    console.error('Ошибка загрузки:', e);
+                }
+            }
+            
+            if (users.length === 0) {
+                users = JSON.parse(localStorage.getItem('kalaxia_users') || '[]');
+            }
+
+            // Находим пользователя и меняем isAdmin
+            const userIndex = users.findIndex(u => u.email === email);
+            if (userIndex !== -1) {
+                users[userIndex].isAdmin = !currentIsAdmin;
+                
+                // Сохраняем в облако
+                if (isJsonBinConfigured) {
+                    try {
+                        await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-Master-Key': JSONBIN_CONFIG.apiKey
+                            },
+                            body: JSON.stringify({ users })
+                        });
+                    } catch (e) {
+                        console.error('Ошибка сохранения:', e);
+                    }
+                }
+                
+                // Сохраняем локально
+                localStorage.setItem('kalaxia_users', JSON.stringify(users));
+                
+                alert(`Админка ${action === 'снять' ? 'снята' : 'выдана'}!`);
+                loadUsers();
+            }
         }
     </script>
 </body>
