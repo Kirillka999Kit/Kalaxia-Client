@@ -1,6 +1,31 @@
 // ========================================
-// KALAXIA CLIENT - JavaScript с регистрацией и админ-панелью
+// KALAXIA CLIENT - JavaScript с Firebase
 // ========================================
+
+// Import Firebase (замени ключи на свои!)
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+// 🔥 ВСТАВЬ СВОИ КЛЮЧИ FIREBASE СЮДА! 🔥
+const firebaseConfig = {
+    apiKey: "ВСТАВЬ_СЮДА",
+    authDomain: "ВСТАВЬ_СЮДА",
+    projectId: "ВСТАВЬ_СЮДА",
+    storageBucket: "ВСТАВЬ_СЮДА",
+    messagingSenderId: "ВСТАВЬ_СЮДА",
+    appId: "ВСТАВЬ_СЮДА"
+};
+
+// Инициализация Firebase
+let db;
+try {
+    const app = initializeApp(firebaseConfig);
+    db = getFirestore(app);
+    console.log('✅ Firebase подключён!');
+} catch (e) {
+    console.log('⚠️ Firebase не настроен. Работает локальное хранилище.');
+    console.log('Открой FIREBASE_SETUP.txt для настройки.');
+}
 
 // Глобальное состояние
 let currentUser = null;
@@ -63,7 +88,7 @@ function showAdminButton() {
     navAuth.appendChild(adminBtn);
 }
 
-function register() {
+async function register() {
     const username = document.getElementById('regUsername').value.trim();
     const email = document.getElementById('regEmail').value.trim();
     const password = document.getElementById('regPassword').value;
@@ -84,47 +109,46 @@ function register() {
         return;
     }
 
-    // Получаем пользователей
-    const users = JSON.parse(localStorage.getItem('kalaxia_users') || '[]');
-
-    // Проверка на существующего пользователя
-    if (users.find(u => u.email === email)) {
-        showToast('Email уже зарегистрирован', 'error');
-        return;
-    }
-
-    if (users.find(u => u.username === username)) {
-        showToast('Username уже занят', 'error');
-        return;
-    }
-
-    // Создаём пользователя
     const newUser = {
         id: Date.now(),
         username,
         email,
-        password, // В реальном проекте нужно хешировать!
+        password,
         createdAt: new Date().toISOString(),
         subscription: null,
-        isAdmin: false
+        isAdmin: false,
+        discord: null
     };
 
-    users.push(newUser);
-    localStorage.setItem('kalaxia_users', JSON.stringify(users));
+    try {
+        // Сохраняем в Firebase
+        if (db) {
+            await setDoc(doc(db, 'users', email), newUser);
+            showToast('✅ Пользователь сохранён в облаке!', 'success');
+        }
+        
+        // Сохраняем локально (для текущего браузера)
+        const users = JSON.parse(localStorage.getItem('kalaxia_users') || '[]');
+        users.push(newUser);
+        localStorage.setItem('kalaxia_users', JSON.stringify(users));
 
-    // Автоматический вход
-    currentUser = newUser;
-    localStorage.setItem('kalaxia_user', JSON.stringify(newUser));
-    updateNavAuth();
+        // Автоматический вход
+        currentUser = newUser;
+        localStorage.setItem('kalaxia_user', JSON.stringify(newUser));
+        updateNavAuth();
 
-    showToast('Регистрация успешна!', 'success');
-    closeModal('registerModal');
+        showToast('Регистрация успешна!', 'success');
+        closeModal('registerModal');
 
-    // Очищаем форму
-    document.getElementById('regUsername').value = '';
-    document.getElementById('regEmail').value = '';
-    document.getElementById('regPassword').value = '';
-    document.getElementById('regPasswordConfirm').value = '';
+        // Очищаем форму
+        document.getElementById('regUsername').value = '';
+        document.getElementById('regEmail').value = '';
+        document.getElementById('regPassword').value = '';
+        document.getElementById('regPasswordConfirm').value = '';
+    } catch (e) {
+        console.error('Ошибка Firebase:', e);
+        showToast('Ошибка регистрации: ' + e.message, 'error');
+    }
 }
 
 function login() {
@@ -397,8 +421,28 @@ function createAdminPanel() {
     document.body.appendChild(panel);
 }
 
-function loadAdminData() {
-    const users = JSON.parse(localStorage.getItem('kalaxia_users') || '[]');
+async function loadAdminData() {
+    let users = [];
+    
+    // Получаем пользователей из Firebase
+    if (db) {
+        try {
+            const querySnapshot = await getDocs(collection(db, 'users'));
+            querySnapshot.forEach((doc) => {
+                users.push(doc.data());
+            });
+            console.log('✅ Загружено пользователей из Firebase:', users.length);
+        } catch (e) {
+            console.error('Ошибка Firebase:', e);
+            showToast('Не удалось загрузить пользователей из облака', 'error');
+        }
+    }
+    
+    // Если Firebase не работает или пусто - берём из localStorage
+    if (users.length === 0) {
+        users = JSON.parse(localStorage.getItem('kalaxia_users') || '[]');
+        console.log('📁 Загружено пользователей из localStorage:', users.length);
+    }
     
     // Статистика
     const totalUsers = users.length;
@@ -432,10 +476,10 @@ function loadAdminData() {
                 <td>${sub ? sub.plan : '—'}</td>
                 <td><span class="status ${statusClass}"><i class="fas fa-circle"></i> ${statusText}</span></td>
                 <td>
-                    <button class="admin-btn admin-btn-edit" onclick="editUser(${user.id})">
+                    <button class="admin-btn admin-btn-edit" onclick="editUser('${user.email}')">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="admin-btn admin-btn-delete" onclick="deleteUser(${user.id})">
+                    <button class="admin-btn admin-btn-delete" onclick="deleteUser('${user.email}')">
                         <i class="fas fa-trash"></i>
                     </button>
                 </td>
