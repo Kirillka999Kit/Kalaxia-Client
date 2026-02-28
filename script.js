@@ -1,31 +1,18 @@
 // ========================================
-// KALAXIA CLIENT - JavaScript с Firebase
+// KALAXIA CLIENT - JavaScript с JSONBin облаком
 // ========================================
 
-// Import Firebase (замени ключи на свои!)
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+// 🔥 JSONBin.io - ОБЛАЧНАЯ БАЗА ДАННЫХ 🔥
+// Настрой по инструкции в JSONBIN_SETUP.txt
 
-// 🔥 ВСТАВЬ СВОИ КЛЮЧИ FIREBASE СЮДА! 🔥
-const firebaseConfig = {
-    apiKey: "ВСТАВЬ_СЮДА",
-    authDomain: "ВСТАВЬ_СЮДА",
-    projectId: "ВСТАВЬ_СЮДА",
-    storageBucket: "ВСТАВЬ_СЮДА",
-    messagingSenderId: "ВСТАВЬ_СЮДА",
-    appId: "ВСТАВЬ_СЮДА"
+const JSONBIN_CONFIG = {
+    apiKey: "ВСТАВЬ_СЮДА_КЛЮЧ",  // Сюда вставь ключ из JSONBin
+    binId: "ВСТАВЬ_СЮДА_ID"      // Сюда вставь ID своего Bin
 };
 
-// Инициализация Firebase
-let db;
-try {
-    const app = initializeApp(firebaseConfig);
-    db = getFirestore(app);
-    console.log('✅ Firebase подключён!');
-} catch (e) {
-    console.log('⚠️ Firebase не настроен. Работает локальное хранилище.');
-    console.log('Открой FIREBASE_SETUP.txt для настройки.');
-}
+// Проверяем настроен ли JSONBin
+const isJsonBinConfigured = JSONBIN_CONFIG.apiKey !== "ВСТАВЬ_СЮДА_КЛЮЧ" && 
+                             JSONBIN_CONFIG.binId !== "ВСТАВЬ_СЮДА_ID";
 
 // Глобальное состояние
 let currentUser = null;
@@ -121,9 +108,9 @@ async function register() {
     };
 
     try {
-        // Сохраняем в Firebase
-        if (db) {
-            await setDoc(doc(db, 'users', email), newUser);
+        // Сохраняем в JSONBin (облако)
+        if (isJsonBinConfigured) {
+            await saveToCloud(newUser);
             showToast('✅ Пользователь сохранён в облаке!', 'success');
         }
         
@@ -146,8 +133,63 @@ async function register() {
         document.getElementById('regPassword').value = '';
         document.getElementById('regPasswordConfirm').value = '';
     } catch (e) {
-        console.error('Ошибка Firebase:', e);
+        console.error('Ошибка:', e);
         showToast('Ошибка регистрации: ' + e.message, 'error');
+    }
+}
+
+// Сохранение в JSONBin
+async function saveToCloud(user) {
+    if (!isJsonBinConfigured) return;
+
+    try {
+        // Получаем текущих пользователей
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binId}/latest`, {
+            method: 'GET',
+            headers: {
+                'X-Master-Key': JSONBIN_CONFIG.apiKey
+            }
+        });
+
+        const data = await response.json();
+        const users = data.record.users || [];
+        
+        // Добавляем нового пользователя
+        users.push(user);
+        
+        // Обновляем в JSONBin
+        await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Master-Key': JSONBIN_CONFIG.apiKey
+            },
+            body: JSON.stringify({ users })
+        });
+
+        console.log('✅ Пользователь сохранён в облаке!');
+    } catch (e) {
+        console.error('Ошибка JSONBin:', e);
+    }
+}
+
+// Загрузка пользователей из облака
+async function loadUsersFromCloud() {
+    if (!isJsonBinConfigured) return [];
+
+    try {
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binId}/latest`, {
+            method: 'GET',
+            headers: {
+                'X-Master-Key': JSONBIN_CONFIG.apiKey
+            }
+        });
+
+        const data = await response.json();
+        return data.record.users || [];
+    } catch (e) {
+        console.error('Ошибка загрузки:', e);
+        return [];
     }
 }
 
