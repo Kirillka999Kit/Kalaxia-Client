@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создать админа - Kalaxia Client</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-dark);
+        }
+        .setup-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 450px;
+            width: 90%;
+        }
+        .setup-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .setup-header i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+        .setup-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+        .setup-header p {
+            color: var(--text-secondary);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .form-group label i {
+            color: var(--primary);
+            width: 18px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .btn-create {
+            width: 100%;
+            padding: 16px;
+            background: var(--gradient-1);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-create:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(99, 102, 241, 0.5);
+        }
+        .setup-note {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 20px;
+        }
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        .success-message i {
+            font-size: 4rem;
+            color: var(--success);
+            margin-bottom: 16px;
+        }
+        .success-message h2 {
+            margin-bottom: 8px;
+        }
+        .success-message p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="setup-container">
+        <div id="setupForm">
+            <div class="setup-header">
+                <i class="fas fa-user-shield"></i>
+                <h1>Создание админа</h1>
+                <p>Создайте первую учётную запись администратора</p>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-user"></i> Username</label>
+                <input type="text" id="adminUsername" placeholder="admin">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-envelope"></i> Email</label>
+                <input type="email" id="adminEmail" placeholder="admin@kalaxia.cc">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-lock"></i> Пароль</label>
+                <input type="password" id="adminPassword" placeholder="••••••••">
+            </div>
+            <button class="btn-create" onclick="createAdmin()">
+                <i class="fas fa-user-plus"></i> Создать админа
+            </button>
+            <p class="setup-note">
+                <i class="fas fa-info-circle"></i>
+                После создания вы сможете войти через главную страницу
+            </p>
+        </div>
+        <div id="successMessage" class="success-message">
+            <i class="fas fa-check-circle"></i>
+            <h2>Готово!</h2>
+            <p>Администратор создан. Теперь вы можете войти в систему.</p>
+            <button class="btn btn-primary" onclick="window.location.href='index.html'">
+                <i class="fas fa-home"></i> На главную
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function createAdmin() {
+            const username = document.getElementById('adminUsername').value.trim();
+            const email = document.getElementById('adminEmail').value.trim();
+            const password = document.getElementById('adminPassword').value;
+
+            if (!username || !email || !password) {
+                alert('Заполните все поля');
+                return;
+            }
+
+            if (password.length < 6) {
+                alert('Пароль должен быть не менее 6 символов');
+                return;
+            }
+
+            // Получаем пользователей
+            const users = JSON.parse(localStorage.getItem('kalaxia_users') || '[]');
+
+            // Создаём админа
+            const adminUser = {
+                id: Date.now(),
+                username,
+                email,
+                password,
+                createdAt: new Date().toISOString(),
+                subscription: null,
+                isAdmin: true
+            };
+
+            users.push(adminUser);
+            localStorage.setItem('kalaxia_users', JSON.stringify(users));
+
+            // Показываем успех
+            document.getElementById('setupForm').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

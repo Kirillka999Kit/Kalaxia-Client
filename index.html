@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalaxia Client - Лучший HVH чит для Minecraft</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="#" class="logo">
+                <i class="fas fa-meteor"></i>
+                <span>KALAXIA</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#home">Главная</a></li>
+                <li><a href="#features">Функции</a></li>
+                <li><a href="#modules">Модули</a></li>
+                <li><a href="#pricing">Цены</a></li>
+            </ul>
+            <div class="nav-auth">
+                <button class="btn btn-outline btn-sm" onclick="openModal('loginModal')">
+                    <i class="fas fa-sign-in-alt"></i> Вход
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="openModal('registerModal')">
+                    <i class="fas fa-user-plus"></i> Регистрация
+                </button>
+            </div>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Главный экран -->
+    <section id="home" class="hero">
+        <div class="hero-bg"></div>
+        <div class="container hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-star"></i>
+                <span>Версия 2.0 уже доступна</span>
+            </div>
+            <h1 class="hero-title">
+                ДОМИНИРУЙ В
+                <span class="gradient-text">HVH</span>
+                СРАЖЕНИЯХ
+            </h1>
+            <p class="hero-subtitle">
+                Kalaxia Client — это чита нового поколения для Minecraft HVH. 
+                Обходи античиты, побеждай соперников и стань легендой.
+            </p>
+            <div class="hero-buttons">
+                <a href="#pricing" class="btn btn-primary btn-lg">
+                    <i class="fas fa-download"></i>
+                    Купить сейчас
+                </a>
+                <a href="#features" class="btn btn-outline btn-lg">
+                    <i class="fas fa-play"></i>
+                    Узнать больше
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <i class="fas fa-users"></i>
+                    <span class="stat-number">15,000+</span>
+                    <span class="stat-label">Пользователей</span>
+                </div>
+                <div class="stat">
+                    <i class="fas fa-shield-alt"></i>
+                    <span class="stat-number">99.9%</span>
+                    <span class="stat-label">Undetected</span>
+                </div>
+                <div class="stat">
+                    <i class="fas fa-code-branch"></i>
+                    <span class="stat-number">50+</span>
+                    <span class="stat-label">Модулей</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-glow"></div>
+    </section>
+
+    <!-- Преимущества -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">
+                    <i class="fas fa-bolt"></i>
+                    Преимущества
+                </span>
+                <h2 class="section-title">Почему выбирают Kalaxia?</h2>
+                <p class="section-subtitle">
+                    Мы создали чит, который превосходит все ожидания
+                </p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-ghost"></i>
+                    </div>
+                    <h3>Полная невидимость</h3>
+                    <p>Наш обход античитов работает на всех популярных серверах. Играй без ограничений.</p>
+                    <div class="feature-tags">
+                        <span>Watchdog</span>
+                        <span>NCP</span>
+                        <span>AAC</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-crosshairs"></i>
+                    </div>
+                    <h3>Умная KillAura</h3>
+                    <p>Настраиваемая система боя с различными режимами. Побеждай любого соперника.</p>
+                    <div class="feature-tags">
+                        <span>Reach</span>
+                        <span>Velocity</span>
+                        <span>CPS</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <h3>Оптимизация FPS</h3>
+                    <p>Встроенная оптимизация повышает производительность даже на слабых ПК.</p>
+                    <div class="feature-tags">
+                        <span>+50%</span>
+                        <span>FPS Boost</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3>Красивый GUI</h3>
+                    <p>Интуитивно понятный интерфейс с множеством тем оформления. Настрой под себя.</p>
+                    <div class="feature-tags">
+                        <span>ClickGUI</span>
+                        <span>HUD</span>
+                        <span>Themes</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-cloud-download-alt"></i>
+                    </div>
+                    <h3>Авто-обновления</h3>
+                    <p>Получай новые функции и обходы автоматически. Всегда будь впереди.</p>
+                    <div class="feature-tags">
+                        <span>Cloud</span>
+                        <span>Auto</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>Поддержка 24/7</h3>
+                    <p>Наша команда всегда готова помочь с любыми вопросами по читy.</p>
+                    <div class="feature-tags">
+                        <span>Discord</span>
+                        <span>Telegram</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Модули -->
+    <section id="modules" class="modules">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">
+                    <i class="fas fa-cubes"></i>
+                    Модули
+                </span>
+                <h2 class="section-title">Более 50 функций</h2>
+                <p class="section-subtitle">
+                    Всё необходимое для доминирования на сервере
+                </p>
+            </div>
+            <div class="modules-grid">
+                <div class="module-category">
+                    <div class="category-header">
+                        <i class="fas fa-fist-raised"></i>
+                        <h3>Combat</h3>
+                    </div>
+                    <ul class="module-list">
+                        <li><span class="dot"></span>KillAura</li>
+                        <li><span class="dot"></span>Velocity</li>
+                        <li><span class="dot"></span>Reach</li>
+                        <li><span class="dot"></span>HitBoxes</li>
+                        <li><span class="dot"></span>Criticals</li>
+                        <li><span class="dot"></span>AutoArmor</li>
+                    </ul>
+                </div>
+                <div class="module-category">
+                    <div class="category-header">
+                        <i class="fas fa-running"></i>
+                        <h3>Movement</h3>
+                    </div>
+                    <ul class="module-list">
+                        <li><span class="dot"></span>Fly</li>
+                        <li><span class="dot"></span>Speed</li>
+                        <li><span class="dot"></span>BunnyHop</li>
+                        <li><span class="dot"></span>NoSlow</li>
+                        <li><span class="dot"></span>Step</li>
+                        <li><span class="dot"></span>LongJump</li>
+                    </ul>
+                </div>
+                <div class="module-category">
+                    <div class="category-header">
+                        <i class="fas fa-eye"></i>
+                        <h3>Render</h3>
+                    </div>
+                    <ul class="module-list">
+                        <li><span class="dot"></span>ESP</li>
+                        <li><span class="dot"></span>Tracers</li>
+                        <li><span class="dot"></span>FullBright</li>
+                        <li><span class="dot"></span>NameTags</li>
+                        <li><span class="dot"></span>Chams</li>
+                        <li><span class="dot"></span>StorageESP</li>
+                    </ul>
+                </div>
+                <div class="module-category">
+                    <div class="category-header">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>Player</h3>
+                    </div>
+                    <ul class="module-list">
+                        <li><span class="dot"></span>Scaffold</li>
+                        <li><span class="dot"></span>AutoTool</li>
+                        <li><span class="dot"></span>FastPlace</li>
+                        <li><span class="dot"></span>NoFall</li>
+                        <li><span class="dot"></span>AntiAFK</li>
+                        <li><span class="dot"></span>FastEat</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Цены -->
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">
+                    <i class="fas fa-tag"></i>
+                    Тарифы
+                </span>
+                <h2 class="section-title">Выберите свой план</h2>
+                <p class="section-subtitle">
+                    Доступные цены для каждого игрока
+                </p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3><i class="fas fa-calendar-day"></i> 1 День</h3>
+                        <div class="price">
+                            <span class="currency">₽</span>
+                            <span class="amount">40</span>
+                            <span class="period">/24 часа</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Доступ ко всем модулям</li>
+                        <li><i class="fas fa-check"></i> Базовые обходы</li>
+                        <li><i class="fas fa-check"></i> Поддержка в Discord</li>
+                        <li><i class="fas fa-check"></i> Авто-обновления</li>
+                        <li class="disabled"><i class="fas fa-times"></i> Приватные конфиги</li>
+                        <li class="disabled"><i class="fas fa-times"></i> Ранний доступ</li>
+                    </ul>
+                    <a href="https://funpay.com/users/15863514/" target="_blank" class="btn btn-outline btn-block">
+                        <i class="fas fa-shopping-cart"></i> Купить
+                    </a>
+                </div>
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3><i class="fas fa-calendar-week"></i> 7 Дней</h3>
+                        <div class="price">
+                            <span class="currency">₽</span>
+                            <span class="amount">80</span>
+                            <span class="period">/неделю</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Доступ ко всем модулям</li>
+                        <li><i class="fas fa-check"></i> Продвинутые обходы</li>
+                        <li><i class="fas fa-check"></i> Приоритетная поддержка</li>
+                        <li><i class="fas fa-check"></i> Авто-обновления</li>
+                        <li><i class="fas fa-check"></i> Приватные конфиги</li>
+                        <li class="disabled"><i class="fas fa-times"></i> Ранний доступ</li>
+                    </ul>
+                    <a href="https://funpay.com/users/15863514/" target="_blank" class="btn btn-primary btn-block">
+                        <i class="fas fa-shopping-cart"></i> Купить
+                    </a>
+                </div>
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3><i class="fas fa-calendar-alt"></i> 14 Дней</h3>
+                        <div class="price">
+                            <span class="currency">₽</span>
+                            <span class="amount">150</span>
+                            <span class="period">/2 недели</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Доступ ко всем модулям</li>
+                        <li><i class="fas fa-check"></i> Продвинутые обходы</li>
+                        <li><i class="fas fa-check"></i> Приоритетная поддержка</li>
+                        <li><i class="fas fa-check"></i> Авто-обновления</li>
+                        <li><i class="fas fa-check"></i> Приватные конфиги</li>
+                        <li class="disabled"><i class="fas fa-times"></i> Ранний доступ</li>
+                    </ul>
+                    <a href="https://funpay.com/users/15863514/" target="_blank" class="btn btn-primary btn-block">
+                        <i class="fas fa-shopping-cart"></i> Купить
+                    </a>
+                </div>
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3><i class="fas fa-calendar"></i> 30 Дней</h3>
+                        <div class="price">
+                            <span class="currency">₽</span>
+                            <span class="amount">300</span>
+                            <span class="period">/месяц</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Доступ ко всем модулям</li>
+                        <li><i class="fas fa-check"></i> Все обходы + приватные</li>
+                        <li><i class="fas fa-check"></i> VIP поддержка 24/7</li>
+                        <li><i class="fas fa-check"></i> Авто-обновления</li>
+                        <li><i class="fas fa-check"></i> Приватные конфиги</li>
+                        <li><i class="fas fa-check"></i> Ранний доступ к бете</li>
+                    </ul>
+                    <a href="https://funpay.com/users/15863514/" target="_blank" class="btn btn-primary btn-block">
+                        <i class="fas fa-shopping-cart"></i> Купить
+                    </a>
+                </div>
+                <div class="pricing-card popular">
+                    <div class="popular-badge">
+                        <i class="fas fa-fire"></i>
+                        Топ выбор
+                    </div>
+                    <div class="pricing-header">
+                        <h3><i class="fas fa-infinity"></i> Life-Time</h3>
+                        <div class="price">
+                            <span class="currency">₽</span>
+                            <span class="amount">500</span>
+                            <span class="period">/навсегда</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Доступ ко всем модулям</li>
+                        <li><i class="fas fa-check"></i> Все обходы + приватные</li>
+                        <li><i class="fas fa-check"></i> VIP поддержка 24/7</li>
+                        <li><i class="fas fa-check"></i> Авто-обновления</li>
+                        <li><i class="fas fa-check"></i> Приватные конфиги</li>
+                        <li><i class="fas fa-check"></i> Ранний доступ к бете</li>
+                        <li><i class="fas fa-check"></i> Личный менеджер</li>
+                    </ul>
+                    <a href="https://funpay.com/users/15863514/" target="_blank" class="btn btn-primary btn-block">
+                        <i class="fas fa-shopping-cart"></i> Купить
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="#" class="logo">
+                        <i class="fas fa-meteor"></i>
+                        <span>KALAXIA</span>
+                    </a>
+                    <p>Лучший HVH клиент для Minecraft с 2024 года.</p>
+                    <div class="social-links">
+                        <a href="https://discord.gg/HXe2gHJh" target="_blank" title="Discord"><i class="fab fa-discord"></i></a>
+                        <a href="https://www.youtube.com/@MINEC155" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Навигация</h4>
+                    <ul>
+                        <li><a href="#home">Главная</a></li>
+                        <li><a href="#features">Функции</a></li>
+                        <li><a href="#modules">Модули</a></li>
+                        <li><a href="#pricing">Цены</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Поддержка</h4>
+                    <ul>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Discord</a></li>
+                        <li><a href="#">Telegram</a></li>
+                        <li><a href="#">Контакты</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Информация</h4>
+                    <ul>
+                        <li><a href="#">Правила</a></li>
+                        <li><a href="#">Оферта</a></li>
+                        <li><a href="#">Политика конфиденциальности</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024-2026 Kalaxia Client. Все права защищены.</p>
+                <p class="disclaimer">Не является официальным продуктом Mojang AB.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Модальное окно входа -->
+    <div class="modal" id="loginModal">
+        <div class="modal-overlay" onclick="closeModal('loginModal')"></div>
+        <div class="modal-content modal-auth">
+            <button class="modal-close" onclick="closeModal('loginModal')">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-header">
+                <i class="fas fa-sign-in-alt"></i>
+                <h2>Вход в аккаунт</h2>
+            </div>
+            <div class="modal-body">
+                <div class="auth-form">
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="loginEmail" placeholder="email@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> Пароль</label>
+                        <input type="password" id="loginPassword" placeholder="••••••••">
+                    </div>
+                    <button class="btn btn-primary btn-block" onclick="login()">
+                        <i class="fas fa-sign-in-alt"></i> Войти
+                    </button>
+                    <p class="auth-note">
+                        Нет аккаунта? <a href="#" onclick="switchModal('loginModal', 'registerModal')">Зарегистрироваться</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно регистрации -->
+    <div class="modal" id="registerModal">
+        <div class="modal-overlay" onclick="closeModal('registerModal')"></div>
+        <div class="modal-content modal-auth">
+            <button class="modal-close" onclick="closeModal('registerModal')">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-header">
+                <i class="fas fa-user-plus"></i>
+                <h2>Регистрация</h2>
+            </div>
+            <div class="modal-body">
+                <div class="auth-form">
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Username</label>
+                        <input type="text" id="regUsername" placeholder="Придумайте никнейм">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="regEmail" placeholder="email@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> Пароль</label>
+                        <input type="password" id="regPassword" placeholder="••••••••">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> Повторите пароль</label>
+                        <input type="password" id="regPasswordConfirm" placeholder="••••••••">
+                    </div>
+                    <button class="btn btn-primary btn-block" onclick="register()">
+                        <i class="fas fa-user-plus"></i> Зарегистрироваться
+                    </button>
+                    <p class="auth-note">
+                        Уже есть аккаунт? <a href="#" onclick="switchModal('registerModal', 'loginModal')">Войти</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
