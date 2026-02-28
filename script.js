@@ -107,7 +107,7 @@ window.login = function() {
     document.getElementById('loginPassword').value = '';
 };
 
-window.register = async function() {
+window.register = function() {
     const username = document.getElementById('regUsername').value.trim();
     const email = document.getElementById('regEmail').value.trim();
     const password = document.getElementById('regPassword').value;
@@ -117,7 +117,7 @@ window.register = async function() {
     if (password.length < 6) { showToast('Пароль должен быть не менее 6 символов', 'error'); return; }
     const newUser = {id: Date.now(), username, email, password, createdAt: new Date().toISOString(), subscription: null, isAdmin: false, discord: null};
     try {
-        if (isJsonBinConfigured) { await saveToCloud(newUser); showToast('✅ Пользователь сохранён в облаке!', 'success'); }
+        if (isJsonBinConfigured) { saveToCloud(newUser); showToast('✅ Пользователь сохранён в облаке!', 'success'); }
         const users = JSON.parse(localStorage.getItem('kalaxia_users') || '[]');
         users.push(newUser);
         localStorage.setItem('kalaxia_users', JSON.stringify(users));
