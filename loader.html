@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalaxia Client - Loader</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0f;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        .loader-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Внешнее кольцо */
+        .ring-outer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 3px solid transparent;
+            border-top-color: #6366f1;
+            border-radius: 50%;
+            animation: spin 2s linear infinite;
+        }
+
+        .ring-outer::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 3px solid transparent;
+            border-top-color: #ec4899;
+            border-radius: 50%;
+            animation: spin 3s linear reverse infinite;
+        }
+
+        /* Среднее кольцо */
+        .ring-middle {
+            position: absolute;
+            width: 70%;
+            height: 70%;
+            border: 2px solid transparent;
+            border-top-color: #06b6d4;
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite;
+        }
+
+        .ring-middle::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            border: 2px solid transparent;
+            border-top-color: #8b5cf6;
+            border-radius: 50%;
+            animation: spin 2.5s linear reverse infinite;
+        }
+
+        /* Внутренний круг */
+        .core {
+            position: absolute;
+            width: 30%;
+            height: 30%;
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            border-radius: 50%;
+            animation: pulse 1.5s ease-in-out infinite;
+            box-shadow: 
+                0 0 30px rgba(99, 102, 241, 0.5),
+                0 0 60px rgba(236, 72, 153, 0.3),
+                0 0 90px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Метеоры */
+        .meteor {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 
+                0 0 10px #fff,
+                0 0 20px #6366f1,
+                0 0 30px #ec4899;
+            animation: meteor 3s linear infinite;
+        }
+
+        .meteor:nth-child(1) { animation-delay: 0s; }
+        .meteor:nth-child(2) { animation-delay: 0.5s; }
+        .meteor:nth-child(3) { animation-delay: 1s; }
+        .meteor:nth-child(4) { animation-delay: 1.5s; }
+        .meteor:nth-child(5) { animation-delay: 2s; }
+
+        /* Логотип */
+        .logo {
+            position: absolute;
+            bottom: -80px;
+            text-align: center;
+        }
+
+        .logo h1 {
+            color: #fff;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #6366f1, #ec4899, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        .logo p {
+            color: #71717a;
+            font-size: 0.9rem;
+            margin-top: 8px;
+            letter-spacing: 3px;
+        }
+
+        /* Прогресс бар */
+        .progress-container {
+            position: absolute;
+            bottom: -140px;
+            width: 300px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1, #ec4899, #06b6d4);
+            width: 0%;
+            animation: loading 3s ease-out forwards;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+        }
+
+        .status {
+            position: absolute;
+            bottom: -180px;
+            color: #71717a;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        /* Частицы */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #6366f1;
+            border-radius: 50%;
+            animation: particle 4s linear infinite;
+        }
+
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 30%; animation-delay: 0.5s; }
+        .particle:nth-child(3) { left: 50%; animation-delay: 1s; }
+        .particle:nth-child(4) { left: 70%; animation-delay: 1.5s; }
+        .particle:nth-child(5) { left: 90%; animation-delay: 2s; }
+        .particle:nth-child(6) { left: 20%; animation-delay: 2.5s; }
+        .particle:nth-child(7) { left: 80%; animation-delay: 3s; }
+        .particle:nth-child(8) { left: 40%; animation-delay: 3.5s; }
+
+        /* Анимации */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                transform: scale(0.95);
+                opacity: 0.8;
+            }
+            50% { 
+                transform: scale(1.1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes meteor {
+            0% {
+                transform: translateY(-200px) translateX(-100px);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(200px) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes loading {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes glow {
+            0%, 100% { 
+                filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.5));
+            }
+            50% { 
+                filter: drop-shadow(0 0 30px rgba(236, 72, 153, 0.5));
+            }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes particle {
+            0% {
+                transform: translateY(300px) scale(0);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-300px) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* Глитч эффект */
+        .glitch {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            font-weight: 900;
+            color: transparent;
+            opacity: 0.1;
+            pointer-events: none;
+            animation: glitch 2s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 100% { transform: translate(-50%, -50%); }
+            20% { transform: translate(-52%, -48%); }
+            40% { transform: translate(-48%, -52%); }
+            60% { transform: translate(-51%, -49%); }
+            80% { transform: translate(-49%, -51%); }
+        }
+    </style>
+</head>
+<body>
+    <div class="loader-container">
+        <!-- Частицы -->
+        <div class="particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+
+        <!-- Метеоры -->
+        <div class="meteor" style="top: 0; left: 0;"></div>
+        <div class="meteor" style="top: 20%; left: 80%;"></div>
+        <div class="meteor" style="top: 40%; left: 10%;"></div>
+        <div class="meteor" style="top: 60%; left: 90%;"></div>
+        <div class="meteor" style="top: 80%; left: 30%;"></div>
+
+        <!-- Кольца -->
+        <div class="ring-outer"></div>
+        <div class="ring-middle"></div>
+        
+        <!-- Ядро -->
+        <div class="core"></div>
+
+        <!-- Глитч -->
+        <div class="glitch">KALAXIA</div>
+
+        <!-- Логотип -->
+        <div class="logo">
+            <h1>KALAXIA</h1>
+            <p>CLIENT</p>
+        </div>
+
+        <!-- Прогресс -->
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
+
+        <!-- Статус -->
+        <div class="status">LOADING...</div>
+    </div>
+
+    <script>
+        // Динамический статус
+        const statuses = [
+            'LOADING...',
+            'INITIALIZING...',
+            'LOADING MODULES...',
+            'CHECKING UPDATES...',
+            'READY!'
+        ];
+
+        let statusIndex = 0;
+        const statusElement = document.querySelector('.status');
+
+        const interval = setInterval(() => {
+            statusIndex++;
+            if (statusIndex < statuses.length) {
+                statusElement.textContent = statuses[statusIndex];
+            } else {
+                clearInterval(interval);
+                // Здесь можно перейти к основному приложению
+                // window.location.href = 'main.html';
+            }
+        }, 600);
+
+        // Добавляем случайные частицы
+        setInterval(() => {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            document.querySelector('.particles').appendChild(particle);
+
+            setTimeout(() => {
+                particle.remove();
+            }, 4000);
+        }, 200);
+    </script>
+</body>
+</html>
